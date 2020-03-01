@@ -10,51 +10,51 @@ struct node{
   int minv, maxv;
 }
 
-SegmentedTree[4*MAX];
+tree[4*MAX];
 
-void BuildTree(long long a[], int Vertex, int Left, int Right){
-  if (Left == Right)
-    SegmentedTree[Vertex].minv = SegmentedTree[Vertex].maxv = a[Left];
+void buildtree(long long a[], int vertex, int left, int right){
+  if (left == right)
+    tree[vertex].minv = tree[vertex].maxv = a[left];
   else{
-    int Middle = Left + (Right - Left) / 2;
-    BuildTree(a, 2*Vertex + 1, Left, Middle);
-    BuildTree(a, 2*Vertex + 2, Middle+1, Right);
-    SegmentedTree[Vertex].minv = min(SegmentedTree[2*Vertex + 1].minv,SegmentedTree[2*Vertex+2].minv);
-    SegmentedTree[Vertex].maxv = max(SegmentedTree[2*Vertex + 1].maxv,SegmentedTree[2*Vertex+2].maxv);
+    int middle = left + (right - left) / 2;
+    buildtree(a, 2 * vertex + 1, left, middle);
+    buildtree(a, 2 * vertex + 2, middle + 1, right);
+    tree[vertex].minv = min(tree[2 * vertex + 1].minv, tree[2 * vertex + 2].minv);
+    tree[vertex].maxv = max(tree[2 * vertex + 1].maxv, tree[2 * vertex + 2].maxv);
       }
 
 }
 
-long long GetMin(int Vertex, int LeftPosition, int RightPosition, int Left, int Right){
-  if (Left > Right)
+long long getmin(int vertex, int leftposition, int rightposition, int left, int right){
+  if (left > right)
     return INF;
-  if ((Left == LeftPosition) && (Right == RightPosition))
-    return SegmentedTree[Vertex].minv;
-  int Middle = (LeftPosition + RightPosition) / 2;
-  return min(GetMin(2*Vertex + 1, LeftPosition, Middle, Left, min(Right,Middle)), GetMin(2*Vertex+2, Middle+1, RightPosition, max(Left,Middle+1),Right));
+  if ((left == leftposition) && (right == rightposition))
+    return tree[vertex].minv;
+  int middle = (leftposition + rightposition) / 2;
+  return min(getmin(2 * vertex + 1, leftposition, middle, left, min(right, middle)), getmin(2 * vertex + 2, middle + 1, rightposition, max(left, middle + 1), right));
 }
  
-long long GetMax(int Vertex, int LeftPosition, int RightPosition, int Left, int Right){
-  if (Left > Right)
+long long getmax(int vertex, int leftposition, int rightposition, int left, int right){
+  if (left > right)
     return -INF;
-  if ((Left == LeftPosition) && (Right == RightPosition))
-    return SegmentedTree[Vertex].maxv;
-  int Middle = (LeftPosition + RightPosition) / 2;
-  return max(GetMax(2*Vertex + 1, LeftPosition, Middle, Left, min(Right,Middle)), GetMax(2*Vertex+2, Middle+1, RightPosition, max(Left,Middle+1),Right));
+  if ((left == leftposition) && (right == rightposition))
+    return tree[vertex].maxv;
+  int middle = (leftposition + rightposition) / 2;
+  return max(getmax(2 * vertex + 1, leftposition, middle, left, min(right, middle)), getmax(2 * vertex + 2, middle + 1, rightposition, max(left, middle+1), right));
 }
 
-void Update(int Vertex, int LeftPos, int RightPos, int Position, int NewValue){
-   if (LeftPos == RightPos)
-    SegmentedTree[Vertex].minv = SegmentedTree[Vertex].maxv = NewValue;
+void update(int vertex, int leftposition, int rightposition, int position, int newvalue){
+   if (leftposition == rightposition)
+    tree[vertex].minv = tree[vertex].maxv = newvalue;
   else{
-    int Middle = (LeftPos + RightPos) / 2;
-    if (Position <= Middle)
-      Update (2*Vertex + 1, LeftPos, Middle, Position, NewValue);
+    int middle = (leftposition + rightposition) / 2;
+    if (position <= middle)
+      update (2 * vertex + 1, leftposition, middle, position, newvalue);
     else
-      Update (2*Vertex+2, Middle+1, RightPos, Position, NewValue);
+      update (2 * vertex + 2, middle + 1, rightposition, position, newvalue);
 
-    SegmentedTree[Vertex].minv = min(SegmentedTree[2*Vertex + 1].minv,SegmentedTree[2*Vertex+2].minv);
-    SegmentedTree[Vertex].maxv = max(SegmentedTree[2*Vertex + 1].maxv,SegmentedTree[2*Vertex+2].maxv);
+    tree[vertex].minv = min(tree[2 * vertex + 1].minv,tree[2 * vertex + 2].minv);
+    tree[vertex].maxv = max(tree[2 * vertex + 1].maxv,tree[2 * vertex + 2].maxv);
      }
 }
 
@@ -70,15 +70,15 @@ int x, y;
 for(int i = 0; i <= MAX; i++)
   a[i] = (i * i) % 12345 + ((i * i) % 23456 * i) % 23456;
 
-BuildTree(a,1,0,MAX-1);
+buildtree(a,1,0,MAX-1);
 
 cin >> k;
 
 while(k--){
   cin >> x >> y;
   if (x > 0) 
-    cout << GetMax(1,0,MAX-1,x,y) - GetMin(1,0,MAX-1,x,y) << '\n';
+    cout << getmax(1,0,MAX-1,x,y) - getmin(1,0,MAX-1,x,y) << '\n';
   else
-    Update(1,0,MAX-1,-x,y);
+    update(1,0,MAX-1,-x,y);
           }
 }
