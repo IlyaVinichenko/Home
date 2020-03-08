@@ -1,10 +1,14 @@
 import numpy as np
 
 def linear_func(theta, x):
-    return np.dot(theta, x) # Функция dot() вычисляет скалярное произведение двух массивов.
+    return x @ theta
+
 def linear_func_all(theta, X):
-    return np.array([linear_func(theta, x) for x in X])
+    return X @ theta
+
 def mean_squared_error(theta, X, y):
-    return sum(pow(y - linear_func_all(theta, X), 2)) / len(X)
+    return np.mean((y - linear_func_all(theta, X))**2)
+    
 def grad_mean_squared_error(theta, X, y):
-    return 
+    f = linear_func_all(theta, X)
+    return np.mean(2 * (f - y) * X.T, axis=1)
