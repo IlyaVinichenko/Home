@@ -9,8 +9,9 @@ def loo_score(predict, X, y, k):
 # y — реальные значения классов в обучающей выборке
 # k — количество соседей, которые нужно рассматривать
     score = 0
+    a = np.arange(len(X))
     y = np.array(y)
     for i in range(len(X)):
-        if predict(np.append(X[:i, :], X[i + 1, :], axis = 0), np.append(y[:i], y[i + 1:]), X[i], k) == y[i]:
+        if predict(X[a != i], y[a != i], X[i], k) == y[i]:
             score += 1
     return score
